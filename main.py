@@ -17,6 +17,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Generate a response from the OpenRouter API based on a user prompt.")
     parser.add_argument("user_prompt", type=str, help="User prompt")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
 
     messages = [
@@ -32,8 +33,11 @@ def main():
     )
     if not response.usage:
         raise RuntimeError("Response does not contain usage information. Please check your API key and model availability.")
-    print(f"Prompt tokens: {response.usage.prompt_tokens}")
-    print(f"Response tokens: {response.usage.completion_tokens}")
+    
+    if args.verbose:
+        print(f"User prompt: {args.user_prompt}")
+        print(f"Prompt tokens: {response.usage.prompt_tokens}")
+        print(f"Response tokens: {response.usage.completion_tokens}")
     print(response.choices[0].message.content)
 
 
