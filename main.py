@@ -19,14 +19,16 @@ def main():
     parser.add_argument("user_prompt", type=str, help="User prompt")
     args = parser.parse_args()
 
+    messages = [
+        {
+            "role": "user",
+            "content": args.user_prompt,
+        }
+    ]
+
     response = client.chat.completions.create(
         model="openrouter/free",
-        messages=[
-            {
-                "role": "user",
-                "content": args.user_prompt,
-            }
-        ],
+        messages=messages,
     )
     if not response.usage:
         raise RuntimeError("Response does not contain usage information. Please check your API key and model availability.")
