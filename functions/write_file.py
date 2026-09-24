@@ -8,16 +8,18 @@ def write_file(working_directory: str, file_path: str, content: str) -> str:
             return ValueError(f'Error: Invalid working directory "{working_directory}"')
 
         try:
-            os.makedirs(file_path, exist_ok=True) # create dir structure for target file
-        except Exception as e:
-            return ValueError(f'Error: Invalid target directory "{file_path}": {str(e)}')
-        try:
             target_full_path = os.path.normpath(os.path.join(absolute_working_directory, file_path))
         except Exception as e:
             return ValueError(f'Error: Invalid target directory "{file_path}": {str(e)}')
 
         if os.path.isdir(target_full_path):
             return ValueError(f'Error: Cannot write to "{file_path}" as it is a directory')
+
+        try:
+            os.makedirs(os.path.dirname(target_full_path), exist_ok=True) # create dir structure for target file
+        except Exception as e:
+            return ValueError(f'Error: Invalid target directory "{file_path}": {str(e)}')
+
 
         valid_target_dir = os.path.commonpath([absolute_working_directory, target_full_path]) == absolute_working_directory
         if not valid_target_dir:
