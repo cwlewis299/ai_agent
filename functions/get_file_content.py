@@ -1,6 +1,8 @@
 from functions.get_files_info import get_files_info
 import os
 
+MAX_CHARS = 10000
+
 def get_file_content(working_directory: str, file_path: str) -> str:
     try:
         try:
@@ -24,7 +26,7 @@ def get_file_content(working_directory: str, file_path: str) -> str:
             return f"{str(err_message)}"
         
         
-        MAX_CHARS = 10000
+        
         try:
             file = open(target_full_path, 'r')
             content: str = file.read(MAX_CHARS)  # Read the first MAX_CHARS characters
@@ -41,3 +43,22 @@ def get_file_content(working_directory: str, file_path: str) -> str:
     if 'err_message' in locals():
         return f"{str(err_message)}"
     return content
+
+# LLM declaration schema
+schema_get_file_content = {
+    "type": "function",
+    "function": {
+        "name": "get_file_content",
+        "description": f"Returns up to {MAX_CHARS} characters of the content of the specified file",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "The path to the file to read, relative to the working directory"
+                },
+            },
+            "required": ["file_path"],
+        },
+    },
+}

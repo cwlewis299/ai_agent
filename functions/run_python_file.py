@@ -48,3 +48,27 @@ def run_python_file(
         return output
     except Exception as e:
         return ValueError(f'Error: executing Python file: {e}')
+
+# LLM declaration schema
+schema_run_python_file = {
+    "type": "function",
+    "function": {
+        "name": "run_python_file",
+        "description": "Executes a specified Python file and returns its output (including STDERR)",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "The path to the file to execute, relative to the working directory"
+                },
+                "args": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Optional list of arguments to pass to the Python file"
+                },
+            },
+            "required": ["file_path"],
+        },   
+    },
+}
