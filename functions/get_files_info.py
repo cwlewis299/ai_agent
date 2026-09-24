@@ -43,3 +43,21 @@ def get_files_info(working_directory: str, directory: str = ".") -> str:
     content_str = "\n  - ".join([f"{name}: file_size={info['size']}, is_dir={info['is_dir']}" for name, info in target_directory_contents.items()])   
 
     return f'Result for {normalized_directory} directory:\n  - {content_str}'
+
+# LLM declaration schema
+schema_get_files_info = {
+    "type": "function",
+    "function": {
+        "name": "get_files_info",
+        "description": "Lists files in a specified directory relative to the working directory, providing file size and directory status",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "directory": {
+                    "type": "string",
+                    "description": "Directory path to list files from, relative to the working directory (default is the working directory itself)",
+                },
+            },
+        },
+    },
+}
