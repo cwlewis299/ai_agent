@@ -1,4 +1,4 @@
-import os
+import os, sys
 import argparse
 import json
 from prompts import system_prompt
@@ -28,27 +28,33 @@ def main():
         {"role": "user", "content": args.user_prompt},
     ]
 
-    response = client.chat.completions.create(
-        model="openrouter/free",
-        messages=messages,
-        tools=available_functions,
-    )
-    if not response.usage:
-        raise RuntimeError("Response does not contain usage information. Please check your API key and model availability.")
-    
-    if args.verbose:
-        print(f"User prompt: {args.user_prompt}")
-        print(f"Prompt tokens: {response.usage.prompt_tokens}")
-        print(f"Response tokens: {response.usage.completion_tokens}")
-    message = response.choices[0].message
-    if message.tool_calls:
-        for tool_call in message.tool_calls:
-            #function_args = json.loads(tool_call.function.arguments or "{}")
-            result_message = call_function(tool_call, verbose=args.verbose)
-            if args.verbose:
-                print(f"-> {result_message['content']}")
-    else:
-        print(message.content)
+    for _ in range(20):
+        response = client.chat.completions.create(
+            model="openrouter/free",
+            messages=messages,
+            tools=available_functions,
+        )
+        if not response.usage:
+            raise RuntimeError("Response does not contain usage information. Please check your API key and model availability.")
+        
+        if args.verbose:
+            print(f"User prompt: {args.user_prompt}")
+            print(f"Prompt tokens: {response.usage.prompt_tokens}")
+            print(f"Response tokens: {response.usage.completion_tokens}")
+        message = response.choices[0].message
+        messages.append(message)
+        if message.tool_calls:
+            for tool_call in message.tool_calls:
+                #function_args = json.loads(tool_call.function.arguments or "{}")
+                result_message = call_function(tool_call, verbose=args.verbose)
+                messages.append(result_message)
+                if args.verbose:
+                    print(f"-> {result_message['content']}")
+        else:
+            print(message.content)
+            break
+    if not message.content:
+        sys.exit("Unable to complete request within 20 iterations")
 
 
 if __name__ == "__main__":

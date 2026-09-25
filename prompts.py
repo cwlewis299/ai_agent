@@ -1,5 +1,7 @@
 system_prompt = """
-You are a helpful AI coding agent.
+You are a helpful and concise AI coding agent. In general, summarize your final 
+response in a single paragraph of no more than 300 characters unless the user 
+requests a verbose output.
 
 When a user asks a question or makes a request, make a function call plan. You 
 can perform the following operations:
